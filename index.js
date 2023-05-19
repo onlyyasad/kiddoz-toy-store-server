@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 app.use(cors());
@@ -28,10 +28,15 @@ async function run() {
 
         const toysCollection = client.db('kiddozDB').collection('toys');
 
+        const indexKeys = { name: 1, sub_category: 1 };
+        const indexOptions = { name: "nameSubCategory" };
+        const result = await toysCollection.createIndex(indexKeys, indexOptions);
+
         app.get('/toys', async (req, res) => {
             const result = await toysCollection.find().toArray();
             res.send(result)
         })
+
         app.get('/toys/:sub_category', async (req, res) => {
             const sub_category = req.params.sub_category;
             if (sub_category === "All Cars") {
@@ -42,6 +47,31 @@ async function run() {
                 const result = await toysCollection.find({ sub_category: sub_category }).toArray();
                 res.send(result)
             }
+        })
+
+        app.get('/allToys', async (req, res) => {
+            const limit = parseInt(req.query.limit) || 20;
+            const result = await toysCollection.find().limit(limit).toArray();
+            res.send(result)
+        })
+
+        app.get("/getToysByText/:text", async (req, res) => {
+            const text = req.params.text;
+            const result = await toysCollection
+                .find({
+                    $or: [
+                        { name: { $regex: text, $options: "i" } },
+                        { sub_category: { $regex: text, $options: "i" } },
+                    ],
+                })
+                .toArray();
+            res.send(result);
+        });
+
+        app.get("/toy/:id", async(req, res) => {
+            const id = req.params.id;
+            const result = await toysCollection.findOne({_id: new ObjectId(id)});
+            res.send(result)
         })
 
         // Send a ping to confirm a successful connection
