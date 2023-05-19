@@ -37,6 +37,17 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/myToys', async(req, res) => {
+            console.log(req.query.email)
+            let query = {};
+            if(req.query?.email){
+                query = {seller_email: req.query.email}
+            }
+            const result = await toysCollection.find(query).toArray();
+    
+            res.send(result)
+        })
+
         app.get('/toys/:sub_category', async (req, res) => {
             const sub_category = req.params.sub_category;
             if (sub_category === "All Cars") {
@@ -48,6 +59,7 @@ async function run() {
                 res.send(result)
             }
         })
+
 
         app.get('/allToys', async (req, res) => {
             const limit = parseInt(req.query.limit) || 20;
