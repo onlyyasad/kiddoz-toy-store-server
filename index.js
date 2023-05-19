@@ -37,17 +37,6 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/myToys', async(req, res) => {
-            console.log(req.query.email)
-            let query = {};
-            if(req.query?.email){
-                query = {seller_email: req.query.email}
-            }
-            const result = await toysCollection.find(query).toArray();
-    
-            res.send(result)
-        })
-
         app.get('/toys/:sub_category', async (req, res) => {
             const sub_category = req.params.sub_category;
             if (sub_category === "All Cars") {
@@ -59,7 +48,6 @@ async function run() {
                 res.send(result)
             }
         })
-
 
         app.get('/allToys', async (req, res) => {
             const limit = parseInt(req.query.limit) || 20;
@@ -86,10 +74,28 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/myToys', async(req, res) => {
+            console.log(req.query.email)
+            let query = {};
+            if(req.query?.email){
+                query = {seller_email: req.query.email}
+            }
+            const result = await toysCollection.find(query).toArray();
+    
+            res.send(result)
+        })
+
         app.post('/toys', async(req, res) =>{
             const toy = req.body;
             console.log('New Toy', toy);
             const result = await toysCollection.insertOne(toy);
+            res.send(result)
+        })
+
+        app.delete('/toys/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id)};
+            const result = await toysCollection.deleteOne(query)
             res.send(result)
         })
 
@@ -105,7 +111,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send("Sports Kid Server is running")
+    res.send("Kiddoz Server is running")
 });
 
 app.listen(port, () => {
