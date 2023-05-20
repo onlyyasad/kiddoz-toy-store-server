@@ -85,6 +85,21 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/myToysSort', async(req, res) => {
+            console.log(req.query.price)
+            let query = {};
+            if(req.query?.email){
+                query = {seller_email: req.query.email}
+            }
+
+            const order = req.query?.price === "ascending"? 1 : -1;
+            const sort = {price: order}
+            console.log(sort)
+            const result = await toysCollection.find(query).sort(sort).toArray();
+    
+            res.send(result)
+        })
+
         app.post('/toys', async(req, res) =>{
             const toy = req.body;
             console.log('New Toy', toy);
