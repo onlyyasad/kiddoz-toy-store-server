@@ -24,13 +24,16 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const toysCollection = client.db('kiddozDB').collection('toys');
+        const blogCollection = client.db('kiddozDB').collection('blogs');
 
-        const indexKeys = { name: 1, sub_category: 1 };
-        const indexOptions = { name: "nameSubCategory" };
-        const result = await toysCollection.createIndex(indexKeys, indexOptions);
+        // const indexKeys = { name: 1, sub_category: 1 };
+        // const indexOptions = { name: "nameSubCategory" };
+        // const result = await toysCollection.createIndex(indexKeys, indexOptions);
+
+        // Toys Section :
 
         app.get('/toys', async (req, res) => {
             const result = await toysCollection.find().toArray();
@@ -132,6 +135,12 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id)};
             const result = await toysCollection.deleteOne(query)
+            res.send(result)
+        })
+
+        // Blogs Section : 
+        app.get('/blogs', async (req, res) => {
+            const result = await blogCollection.find().toArray();
             res.send(result)
         })
 
