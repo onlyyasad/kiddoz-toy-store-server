@@ -78,7 +78,7 @@ async function run() {
         })
 
         app.get('/myToys', async(req, res) => {
-            console.log(req.query.email)
+            // console.log(req.query.email)
             let query = {};
             if(req.query?.email){
                 query = {seller_email: req.query.email}
@@ -89,7 +89,7 @@ async function run() {
         })
 
         app.get('/myToysSort', async(req, res) => {
-            console.log(req.query.price)
+            // console.log(req.query.price)
             let query = {};
             if(req.query?.email){
                 query = {seller_email: req.query.email}
@@ -97,7 +97,7 @@ async function run() {
 
             const order = req.query?.price === "ascending"? 1 : -1;
             const sort = {price: order}
-            console.log(sort)
+            // console.log(sort)
             const result = await toysCollection.find(query).sort(sort).toArray();
     
             res.send(result)
@@ -105,7 +105,7 @@ async function run() {
 
         app.post('/toys', async(req, res) =>{
             const toy = req.body;
-            console.log('New Toy', toy);
+            // console.log('New Toy', toy);
             const result = await toysCollection.insertOne(toy);
             res.send(result)
         })
@@ -113,7 +113,7 @@ async function run() {
         app.put('/toys/:id', async(req, res) =>{
             const id = req.params.id;
             const toy = req.body;
-            console.log(id, toy);
+            // console.log(id, toy);
             
             const filter = {_id: new ObjectId(id)};
             const options = {upsert: true};
